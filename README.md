@@ -55,5 +55,5 @@ Instale o Python 3.x, se ainda não tiver.
 
 Execute o arquivo main.py para iniciar a aplicação.
 
-Considerações Finais
+### Considerações Finais ###
 A aplicação foi projetada para ser simples e eficiente, permitindo o controle de testes de dispositivos de forma intuitiva. Ela utiliza uma interface gráfica baseada em Tkinter e armazena os resultados em arquivos CSV e JSON para fácil análise e persistência de dados.
