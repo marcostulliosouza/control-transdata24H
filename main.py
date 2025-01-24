@@ -71,7 +71,7 @@ def load_state():
             for device_id, data in saved_state.items():
                 data['start_time'] = datetime.fromisoformat(data['start_time']) if data['start_time'] else None
                 devices[int(device_id)] = data
-
+                update_button(int(device_id), data["state"])
                 # Verifique se o estado foi "testing" e se o tempo já ultrapassou 24 horas
                 if devices[int(device_id)]["state"] == "testing":
                     elapsed_time = datetime.now() - devices[int(device_id)]["start_time"]
@@ -188,12 +188,49 @@ def reset_device(device_id):
     save_state()
 
 
+def toggle_button_state(event):
+    """
+    Alterna o estado do botão ao clicar com o botão direito do mouse.
+    """
+    button = event.widget  # Captura o botão clicado
+    device_id = button.device_id  # ID associado ao botão
+
+    # Obtém o estado interno do dispositivo
+    current_enabled = devices[device_id].get("enabled", True)
+
+    # Alterna o estado do botão e sincroniza o estado interno
+    if current_enabled:
+        button.config(state="disabled", style="Disabled.TButton")
+        devices[device_id]["enabled"] = False
+    else:
+        button.config(state="normal", style="Idle.TButton")
+        devices[device_id]["enabled"] = True
+
+    # Salva a alteração no arquivo state.json
+    save_state()
+
+    # Log de depuração
+    print(f"Botão {device_id} atualizado para: {button['state']} ({'habilitado' if devices[device_id]['enabled'] else 'desabilitado'})")
+
+
 def update_button(device_id, state, elapsed_time=None):
     """Atualiza o botão correspondente ao dispositivo."""
     button = device_buttons[device_id]
+    enabled = devices[device_id].get("enabled", True)  # Estado padrão
 
     if state == "idle":
-        button.config(text=f"P{device_id}", style="Idle.TButton", image=icon, compound="left")
+        button.config(
+            text=f"P{device_id}",
+            style="Idle.TButton",
+            image=icon,
+            compound="left",
+            state="normal" if enabled else "disabled"
+        )
+        # Vincula o evento de clique direito diretamente ao botão
+        button.bind("<Button-3>", toggle_button_state)
+        # Associar device_id ao botão (facilita no evento)
+        button.device_id = device_id
+
     elif state == "testing":
         elapsed = f"\n{elapsed_time}" if elapsed_time else ""
         button.config(
@@ -201,6 +238,7 @@ def update_button(device_id, state, elapsed_time=None):
             style="Testing.TButton",
             image=icon_yellow,
             compound="left",
+            state="normal"
         )
     elif state == "completed":
         button.config(
@@ -208,6 +246,7 @@ def update_button(device_id, state, elapsed_time=None):
             style="Testing.TButton",
             image=icon_green,
             compound="left",
+            state="normal"
         )
 
 
@@ -305,6 +344,7 @@ icon_green = icon_green.subsample(12, 12)
 style = ttk.Style()
 style.configure("TButton", font=("Arial", 10), padding=6)
 style.configure("Idle.TButton", background="lightgray", foreground="black", width=7, height=11)
+style.configure("Disabled.TButton", width=7, height=11)
 style.configure("Testing.TButton",
                 background="lightgray",
                 foreground="black",
