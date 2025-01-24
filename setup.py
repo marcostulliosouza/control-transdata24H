@@ -1,6 +1,5 @@
 # setup.py
 from cx_Freeze import setup, Executable
-import os
 
 # Lista de módulos que você está usando no seu script
 modules = ["csv", "configparser", "os", "datetime", "tkinter"]
@@ -22,7 +21,7 @@ executables = [Executable("main.py", base="Win32GUI")]
 
 setup(
     name="Controle de Testes Transdata24H",
-    version="2.0",
+    version="2.1",
     options={
         "build_exe": {
             "packages": modules + packages,
