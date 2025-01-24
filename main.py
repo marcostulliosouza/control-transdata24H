@@ -6,15 +6,15 @@ import csv
 import os
 import configparser
 
-__version__ = '2.0'
+__version__ = '2.1'
 
 # Dados para armazenar o estado dos dispositivos
 devices = {}
 LOG_FILE = f"logs/test24h_{datetime.now().strftime('%Y-%m-%d')}.csv"
 STATE_FILE = "state.json"
 
-GROUP_1 = ["A", "B", "C"]
-GROUP_2 = ["D", "E", "F", "G"]
+GROUP_1 = ["A", "B", "C", "D"]
+GROUP_2 = ["E", "F", "G", "H"]
 COLS_PER_ROW = 10
 
 # Carregar motivos de falha do arquivo config.ini
@@ -306,7 +306,7 @@ style = ttk.Style()
 style.configure("TButton", font=("Arial", 10), padding=6)
 style.configure("Idle.TButton", background="lightgray", foreground="black", width=7, height=11)
 style.configure("Testing.TButton",
-                background="lightgreen",
+                background="lightgray",
                 foreground="black",
                 width=7,
                 height=11
@@ -368,7 +368,7 @@ for group in GROUP_2:
     group_frame.pack(fill="x", padx=5, pady=5)
     group_label = ttk.Label(group_frame, text=f"{group}:", font=("Arial", 12, "bold"))
     group_label.pack(side="left", padx=5)
-    for col in range(COLS_PER_ROW if group != "G" else 1):
+    for col in range(COLS_PER_ROW):
         devices[device_id] = {"serial": None, "start_time": None, "state": "idle", "retests": 0}
         button = ttk.Button(
             group_frame,
